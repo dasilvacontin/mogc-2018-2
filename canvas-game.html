@@ -24,8 +24,12 @@ canvas.height = window.innerHeight
 ctx.fillStyle = 'lightblue'
 ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-let x = 0
-let y = 0
+const player = {
+    x: 0,
+    y: 0,
+    size: 20,
+    score: 0
+}
 let isMouseDown = false
 
 const enemies = []
@@ -59,6 +63,12 @@ function collision (obj1, obj2) {
 obj1 => { ... }
 **/
 
+function collision (obj1, obj2) {
+    const sizeSum = (obj1.size/2 + obj2.size/2)
+    return (Math.abs(obj1.x - obj2.x) < sizeSum) &&
+           (Math.abs(obj1.y - obj2.y) < sizeSum)
+}
+
 const speed = 3
 function render () {
     requestAnimationFrame(render)
@@ -66,22 +76,22 @@ function render () {
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
     // player logic
-    if (keyboard.a) x -= speed
-    if (keyboard.d) x += speed
-    if (keyboard.w) y -= speed
-    if (keyboard.s) y += speed
-
-    // player render
-    ctx.fillStyle = isMouseDown ? 'cyan' : 'blue'
-    const size = 20
-    ctx.fillRect(x - size/2, y - size/2, size, size)
+    if (keyboard.a) player.x -= speed
+    if (keyboard.d) player.x += speed
+    if (keyboard.w) player.y -= speed
+    if (keyboard.s) player.y += speed
 
     // enemy logic
+    let hasPlayerCollided = false
     enemies.forEach(enemy => {
         enemy.x += enemy.vx
         enemy.y += enemy.vy
         if (enemy.x < 0 || canvas.width < enemy.x) enemy.vx *= -1
         if (enemy.y < 0 || canvas.height < enemy.y) enemy.vy *= -1
+
+        if (collision(enemy, player)) {
+            hasPlayerCollided = true
+        }
     })
 
     // enemy render
@@ -94,6 +104,18 @@ function render () {
             enemy.size
         )
     })
+
+    // player render
+    ctx.fillStyle = hasPlayerCollided ? 'cyan' : 'blue'
+    const size = 20
+    ctx.fillRect(player.x - player.size/2,
+        player.y - player.size/2,
+        player.size,
+        player.size)
+
+    ctx.fillStyle = 'black'
+    ctx.font = '30px Helvetica'
+    ctx.fillText(`Score: ${player.score}`, 30, 40)
 }
 requestAnimationFrame(render)
 
