@@ -33,15 +33,34 @@ const player = {
 let isMouseDown = false
 
 const enemies = []
-while (enemies.length < 10) {
-    enemies.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: Math.random() > 0.5 ? 1 : -1,
-        vy: Math.random() > 0.5 ? 1 : -1,
-        size: Math.random() * 20 + 10
-    })
+const coins = []
+
+function reset () {
+    player.x = Math.random() * canvas.width
+    player.y = Math.random() * canvas.height
+    player.score = 0
+
+    while (enemies.length > 0) enemies.pop()
+    while (enemies.length < 10) {
+        enemies.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: Math.random() > 0.5 ? 1 : -1,
+            vy: Math.random() > 0.5 ? 1 : -1,
+            size: Math.random() * 20 + 10
+        })
+    }
+
+    while (coins.length > 0) coins.pop()
+    while (coins.length < 10) {
+        coins.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 10 + 5
+        })
+    }
 }
+reset()
 /**
 enemies.length
 enemies.push({
@@ -72,8 +91,10 @@ function collision (obj1, obj2) {
 const speed = 3
 function render () {
     requestAnimationFrame(render)
+    ctx.globalAlpha = 0.2
     ctx.fillStyle = 'lightblue'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.globalAlpha = 1
 
     // player logic
     if (keyboard.a) player.x -= speed
@@ -91,17 +112,37 @@ function render () {
 
         if (collision(enemy, player)) {
             hasPlayerCollided = true
+            reset()
         }
     })
 
+    // coin logic
+    coins.forEach((coin, i) => {
+        if (collision(player, coin)) {
+            player.score += Math.ceil(coin.size)
+            coins.splice(i, 1)
+        }
+    })
+
+    // coin render
+    coins.forEach(coin => {
+        ctx.fillStyle = 'yellow'
+        ctx.fillRect(coin.x - coin.size/2,
+                     coin.y - coin.size/2,
+                     coin.size,
+                     coin.size)
+    })
+
     // enemy render
+    const sizeFactor = (1-(Date.now() / 500 % 1)) + 1
     enemies.forEach(enemy => {
         ctx.fillStyle = 'red'
+        const size = enemy.size * sizeFactor
         ctx.fillRect(
-            enemy.x - enemy.size/2,
-            enemy.y - enemy.size/2,
-            enemy.size,
-            enemy.size
+            enemy.x - size/2,
+            enemy.y - size/2,
+            size,
+            size
         )
     })
 
