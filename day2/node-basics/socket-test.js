@@ -17,11 +17,28 @@ server.listen(port, () => {
 // Routing
 app.use(express.static(path.join(__dirname, 'public')))
 
-io.on('connection', (socket) => {
-  console.log('got a connection!', socket.id)
+// io.on('connection', (socket) => {
+//   console.log('got a connection!', socket.id)
 
-  socket.on('msg', function (message) {
-    console.log(socket.id, message)
-    socket.emit('welcome')
+//   socket.on('msg', function (message) {
+//     console.log(socket.id, message)
+//     socket.emit('welcome')
+//   })
+// })
+
+io.on('connection', socket => {
+  let username
+
+  socket.on('msg', function (text) {
+    io.sockets.emit(
+      'msg',
+      // username + ': ' + text
+      `${username}: ${text}`
+    )
+    // socket.broadcast.emit('msg', text)
+  })
+
+  socket.on('set-username', function (_username) {
+    username = _username
   })
 })

@@ -5,10 +5,26 @@
 <script>
     const socket = io()
     
-    socket.emit('msg', 'hi my name is david')
+    // socket.emit('msg', 'hi my name is david')
 
-    socket.on('welcome', function () {
-        console.log('got welcome from server')
+    // socket.on('welcome', function () {
+    //     console.log('got welcome from server')
+    // })
+
+    const username = prompt('Whats your username?')
+    socket.emit('set-username', username)
+
+    function sendMessage (text) {
+        socket.emit('msg', text)
+    }
+
+    socket.on('msg', function (text) {
+        console.log(text)
     })
+    // socket.emit(eventType, arg1, arg2, arg3)
+    // socket.on(eventType, function (arg1, arg2, arg3) {
+
+    // })
+    
 </script> 
 </body>
