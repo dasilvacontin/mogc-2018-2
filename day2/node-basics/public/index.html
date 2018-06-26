@@ -2,5 +2,13 @@
     <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-    <script></script> 
+<script>
+    const socket = io()
+    
+    socket.emit('msg', 'hi my name is david')
+
+    socket.on('welcome', function () {
+        console.log('got welcome from server')
+    })
+</script> 
 </body>

@@ -13,6 +13,8 @@ app.get('/profile/:username/achievements', function (req, res) {
   res.send(`hi ${req.params.username} has no achievements`)
 })
 
+// GET /profile/dasilvacontin
+// req.params['username'] = 'dasilvacontin'
 app.get('/profile/:username', function (req, res) {
   res.send(`hi ${req.params.username}`)
 })

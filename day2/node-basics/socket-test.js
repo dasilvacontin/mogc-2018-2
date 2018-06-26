@@ -18,5 +18,10 @@ server.listen(port, () => {
 app.use(express.static(path.join(__dirname, 'public')))
 
 io.on('connection', (socket) => {
+  console.log('got a connection!', socket.id)
 
+  socket.on('msg', function (message) {
+    console.log(socket.id, message)
+    socket.emit('welcome')
+  })
 })
