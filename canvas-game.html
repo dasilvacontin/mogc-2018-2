@@ -91,6 +91,8 @@ function collision (obj1, obj2) {
 const speed = 3
 function render () {
     requestAnimationFrame(render)
+
+    // borrar pantalla
     ctx.globalAlpha = 0.2
     ctx.fillStyle = 'lightblue'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -124,12 +126,20 @@ function render () {
         }
     })
 
+    ctx.save()
+
+    // center camera on player
+    ctx.translate(
+        canvas.width/2 - player.x,
+        canvas.height/2 - player.y
+    )
+
     // coin render
     coins.forEach(coin => {
         ctx.fillStyle = 'yellow'
         ctx.save()
         ctx.translate(coin.x, coin.y)
-        ctx.rotate(Date.now() % (Math.PI*2))
+        ctx.rotate((Date.now() / 200) % (Math.PI*2))
         ctx.fillRect(-coin.size/2,
                      -coin.size/2,
                      coin.size,
@@ -157,6 +167,8 @@ function render () {
         player.y - player.size/2,
         player.size,
         player.size)
+
+    ctx.restore()
 
     ctx.fillStyle = 'black'
     ctx.font = '30px Helvetica'
