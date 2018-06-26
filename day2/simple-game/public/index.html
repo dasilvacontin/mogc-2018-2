@@ -75,19 +75,29 @@ function render () {
 
     // player render
     players.forEach(player => {
+        if (player.dead) return
         ctx.fillStyle = (player === myPlayer) ? 'blue' : 'green'
         const size = 20
         ctx.fillRect(player.x - player.size/2,
             player.y - player.size/2,
             player.size,
             player.size)
+        ctx.textAlign = 'center'
+        ctx.font = '10px Helvetica'
+        ctx.fillText(
+            player.username,
+            player.x,
+            player.y + player.size/2 + 13)
     })
 
     ctx.restore()
 
-    ctx.fillStyle = 'black'
-    ctx.font = '30px Helvetica'
-    ctx.fillText(`Score: ${myPlayer.score}`, 30, 40)
+    players.sort((a, b) => b.score - a.score)
+    players.forEach((player, i) => {
+      ctx.fillStyle = (player === myPlayer)? 'blue' : 'green'
+      ctx.font = '20px Helvetica'
+      ctx.fillText(`${player.username}: ${player.score}`, 30, 40 + i*30)
+    })
 }
 requestAnimationFrame(render)
 
@@ -109,6 +119,8 @@ document.addEventListener('keyup', function (event) {
 })
 
 const socket = io()
+
+socket.emit('set-username', prompt('Username?'))
 
 socket.on('state', function (newState) {
     state = newState

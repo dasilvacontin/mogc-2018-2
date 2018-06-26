@@ -116,7 +116,15 @@ io.on('connection', socket => {
 
   state.players.push(player)
 
+  socket.on('set-username', function (username) {
+    player.username = username
+  })
+
   socket.on('input', function (keyboard) {
     player.keyboard = keyboard
+  })
+
+  socket.on('disconnect', function () {
+    state.players.splice(state.players.indexOf(player), 1)
   })
 })
